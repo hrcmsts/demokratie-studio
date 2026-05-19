@@ -23,7 +23,7 @@ exports.handler = async function (event) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20251001",
+        model: "claude-sonnet-4-6",
         max_tokens: 500,
         system: body.system || "Du bist ein hilfreicher Assistent.",
         messages: body.messages,
