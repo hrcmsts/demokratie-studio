@@ -261,8 +261,12 @@ function Chat({ activeInst }) {
         })
       });
       const d = await res.json();
-      setMsgs(m=>[...m,{r:"ai",t:d.content?.[0]?.text||"Keine Antwort."}]);
-    } catch { setMsgs(m=>[...m,{r:"ai",t:"Verbindungsfehler. Bitte erneut versuchen."}]); }
+      if (d.error) {
+        setMsgs(m=>[...m,{r:"ai",t:`Fehler: ${d.error}`}]);
+      } else {
+        setMsgs(m=>[...m,{r:"ai",t:d.content?.[0]?.text||"Keine Antwort."}]);
+      }
+    } catch(err) { setMsgs(m=>[...m,{r:"ai",t:`Verbindungsfehler: ${err.message}`}]); }
     setBusy(false);
   }
 

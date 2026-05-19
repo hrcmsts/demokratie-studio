@@ -3,6 +3,15 @@ exports.handler = async function (event) {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!apiKey) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "ANTHROPIC_API_KEY ist nicht gesetzt" }),
+    };
+  }
+
   try {
     const body = JSON.parse(event.body);
 
@@ -10,7 +19,7 @@ exports.handler = async function (event) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "x-api-key": apiKey,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
@@ -22,6 +31,13 @@ exports.handler = async function (event) {
     });
 
     const data = await response.json();
+
+    if (data.error) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: data.error.message || JSON.stringify(data.error) }),
+      };
+    }
 
     return {
       statusCode: 200,
